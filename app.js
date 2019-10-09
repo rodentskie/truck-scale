@@ -13,7 +13,7 @@ app.use(express.static("public")); //Send index.html page on GET /
 const SerialPort = require("serialport");
 const Readline = SerialPort.parsers.Readline;
 const port = new SerialPort("COM3", {
-  baudRate: 115200,
+  baudRate: 9600,
   parity: "none",
   dataBits: 8,
   stopBits: 1
