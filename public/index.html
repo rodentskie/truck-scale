@@ -7,19 +7,16 @@
   <body>
     <h1>Weight Graph</h1>
     <h4>Date: <span id="date"></span></h4>
-    <h6>Current Weight: <span id="weight"></span></h6>
+    <h6>Current Weight: <span id="temp"></span></h6>
     <div
       class="chart-container"
       style="position: relative; width:75vw; margin: auto;"
     >
       <canvas id="myChart"></canvas>
     </div>
-    <link
-      href="https://fonts.googleapis.com/css?family=Lato"
-      rel="stylesheet"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <link href="./fonts/font.css" rel="stylesheet" />
+    <script src="./script/chart.min.js"></script>
+    <script src="./script/socket.io.js"></script>
     <script>
       var socket = io.connect("http://localhost:4000"); //connect to server
       var ctx = document.getElementById("myChart").getContext("2d");
@@ -49,24 +46,30 @@
       socket.on("temp", function(data) {
         //As a temp data is received
         // console.log(data.temp); // this is the temp
-        document.getElementById("date").innerHTML = data.date; //update the date
-        document.getElementById("weight").innerHTML = data.temp; //update the weight
-        if (chart.data.labels.length != 15) {
-          //If we have less than 15 data points in the graph
-          chart.data.labels.push(data.time); //Add time in x-asix
-          chart.data.datasets.forEach(dataset => {
-            dataset.data.push(data.temp); //Add temp in y-axis
-          });
-        } else {
-          //If there are already 15 data points in the graph.
-          chart.data.labels.shift(); //Remove first time data
-          chart.data.labels.push(data.time); //Insert latest time data
-          chart.data.datasets.forEach(dataset => {
-            dataset.data.shift(); //Remove first temp data
-            dataset.data.push(data.temp); //Insert latest temp data
-          });
+        const temp = data.temp; //store data from device
+        const tempClear = temp.match(/[+-]?\d+(?:\.\d+)?/g); //extract only numbers from garbage string
+        if (tempClear) {
+          const matches = tempClear[0];
+          console.log(`${temp} : ${matches}`);
+          document.getElementById("date").innerHTML = data.date; //update the date
+          document.getElementById("temp").innerHTML = matches; //update the temperature
+          if (chart.data.labels.length != 15) {
+            //If we have less than 15 data points in the graph
+            chart.data.labels.push(data.time); //Add time in x-asix
+            chart.data.datasets.forEach(dataset => {
+              dataset.data.push(matches); //Add temp in y-axis
+            });
+          } else {
+            //If there are already 15 data points in the graph.
+            chart.data.labels.shift(); //Remove first time data
+            chart.data.labels.push(data.time); //Insert latest time data
+            chart.data.datasets.forEach(dataset => {
+              dataset.data.shift(); //Remove first temp data
+              dataset.data.push(matches); //Insert latest temp data
+            });
+          }
+          chart.update(); //Update the graph.
         }
-        chart.update(); //Update the graph.
       });
     </script>
   </body>
