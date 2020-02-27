@@ -12,7 +12,7 @@ app.use(express.static("public")); //Send index.html page on GET /
 
 const SerialPort = require("serialport");
 const Readline = SerialPort.parsers.Readline;
-const port = new SerialPort("COM4", {
+const port = new SerialPort("/dev/ttyUSB0", {
   baudRate: 9600,
   parity: "none",
   dataBits: 8,
