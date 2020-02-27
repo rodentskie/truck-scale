@@ -1,0 +1,17 @@
+version: '3'
+services:
+  my-app:
+    build:
+      context: ./truck-scale
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: tsis
+    privileged: true
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - ./tsis:/usr/src/app
+      - tsis_node_modules:/usr/src/app/node_modules
+    ports:
+      - 4000:4000
+volumes:
+ tsis_node_modules:
